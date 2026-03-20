@@ -3,7 +3,8 @@ using ParadoxNotion.Design;
 using UnityEngine;
 
 [Category("CookingRobot")]
-public class SetWaitingVisualAT : ActionTask
+[Description("Sets robot to fail state.")]
+public class SetFailStateAT : ActionTask
 {
     private CookingRobotController robot;
 
@@ -13,7 +14,7 @@ public class SetWaitingVisualAT : ActionTask
 
         if (robot == null)
         {
-            return "CookingRobotController not found on this GameObject.";
+            return "CookingRobotController not found.";
         }
 
         return null;
@@ -27,7 +28,7 @@ public class SetWaitingVisualAT : ActionTask
             return;
         }
 
-        robot.SetWaitingState();
+        robot.SetFailState();
         EndAction(true);
     }
 }

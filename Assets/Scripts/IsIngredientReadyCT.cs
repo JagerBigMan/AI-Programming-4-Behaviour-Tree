@@ -3,7 +3,7 @@ using ParadoxNotion.Design;
 using UnityEngine;
 
 [Category("CookingRobot")]
-[Description("Returns true if the ingredient is ready.")]
+[Description("Returns true if the ingredient is within detection range.")]
 public class IsIngredientReadyCT : ConditionTask
 {
     private CookingRobotController robot;
@@ -14,7 +14,7 @@ public class IsIngredientReadyCT : ConditionTask
 
         if (robot == null)
         {
-            return "CookingRobotController not found on this GameObject.";
+            return "CookingRobotController not found.";
         }
 
         return null;
@@ -22,7 +22,7 @@ public class IsIngredientReadyCT : ConditionTask
 
     protected override bool OnCheck()
     {
-        Debug.Log("Checking ingredientReady: " + robot.ingredientReady);
-        return robot.ingredientReady;
+        bool result = robot.IsIngredientInRange();
+        return result;
     }
 }

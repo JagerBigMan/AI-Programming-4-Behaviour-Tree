@@ -17,7 +17,7 @@ public class CookFoodAT : ActionTask
 
         if (robot == null)
         {
-            return "CookingRobotController not found on this GameObject.";
+            return "CookingRobotController not found.";
         }
 
         return null;
@@ -33,7 +33,6 @@ public class CookFoodAT : ActionTask
 
         timer = 0f;
         robot.SetCookingState();
-        Debug.Log("Cooking started.");
     }
 
     protected override void OnUpdate()
@@ -48,7 +47,6 @@ public class CookFoodAT : ActionTask
 
         if (timer >= cookDuration)
         {
-            Debug.Log("Cooking finished.");
             EndAction(true);
         }
     }

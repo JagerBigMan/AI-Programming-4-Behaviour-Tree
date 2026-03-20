@@ -5,15 +5,17 @@ public class CookingRobotController : MonoBehaviour
     [Header("Scene References")]
     public Transform ingredient;
     public Transform cookingStation;
+    public Renderer robotRenderer;
+
+    [Header("Detection Settings")]
+    public float ingredientDetectRange = 3f;
 
     [Header("Cooking Settings")]
     public float moveSpeed = 2f;
-    public bool ingredientReady = false;
     public bool isCooking = false;
     public bool timedOut = false;
 
     [Header("Optional Visuals")]
-    public Renderer robotRenderer;
     public Color idleColor = Color.white;
     public Color waitingColor = Color.yellow;
     public Color cookingColor = Color.green;
@@ -21,12 +23,13 @@ public class CookingRobotController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("CookingRobotController Start on " + gameObject.name);
+        Debug.Log("CookingRobotController started on " + gameObject.name);
         SetIdleState();
     }
 
     private void Update()
     {
+        // Manual state switch for testing
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             Debug.Log("Pressed 1 -> Idle");
@@ -52,9 +55,22 @@ public class CookingRobotController : MonoBehaviour
         }
     }
 
+    public bool IsIngredientInRange()
+    {
+        if (ingredient == null)
+        {
+            Debug.LogWarning("Ingredient is not assigned.");
+            return false;
+        }
+
+        float distance = Vector3.Distance(transform.position, ingredient.position);
+        Debug.Log("Distance to ingredient: " + distance);
+
+        return distance <= ingredientDetectRange;
+    }
+
     public void SetIdleState()
     {
-        Debug.Log("SetIdleState called");
         isCooking = false;
         timedOut = false;
         SetColor(idleColor);
@@ -62,20 +78,20 @@ public class CookingRobotController : MonoBehaviour
 
     public void SetWaitingState()
     {
-        Debug.Log("SetWaitingState called");
+        isCooking = false;
+        timedOut = false;
         SetColor(waitingColor);
     }
 
     public void SetCookingState()
     {
-        Debug.Log("SetCookingState called");
         isCooking = true;
+        timedOut = false;
         SetColor(cookingColor);
     }
 
     public void SetFailState()
     {
-        Debug.Log("SetFailState called");
         timedOut = true;
         isCooking = false;
         SetColor(failColor);
@@ -83,8 +99,6 @@ public class CookingRobotController : MonoBehaviour
 
     private void SetColor(Color color)
     {
-        Debug.Log("SetColor called with " + color);
-
         if (robotRenderer != null)
         {
             robotRenderer.material.color = color;
