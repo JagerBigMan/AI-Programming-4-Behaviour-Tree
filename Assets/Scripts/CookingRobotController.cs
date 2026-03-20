@@ -21,11 +21,40 @@ public class CookingRobotController : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("CookingRobotController Start on " + gameObject.name);
         SetIdleState();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("Pressed 1 -> Idle");
+            SetIdleState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("Pressed 2 -> Waiting");
+            SetWaitingState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Debug.Log("Pressed 3 -> Cooking");
+            SetCookingState();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            Debug.Log("Pressed 4 -> Fail");
+            SetFailState();
+        }
     }
 
     public void SetIdleState()
     {
+        Debug.Log("SetIdleState called");
         isCooking = false;
         timedOut = false;
         SetColor(idleColor);
@@ -33,17 +62,20 @@ public class CookingRobotController : MonoBehaviour
 
     public void SetWaitingState()
     {
+        Debug.Log("SetWaitingState called");
         SetColor(waitingColor);
     }
 
     public void SetCookingState()
     {
+        Debug.Log("SetCookingState called");
         isCooking = true;
         SetColor(cookingColor);
     }
 
     public void SetFailState()
     {
+        Debug.Log("SetFailState called");
         timedOut = true;
         isCooking = false;
         SetColor(failColor);
@@ -51,9 +83,15 @@ public class CookingRobotController : MonoBehaviour
 
     private void SetColor(Color color)
     {
+        Debug.Log("SetColor called with " + color);
+
         if (robotRenderer != null)
         {
             robotRenderer.material.color = color;
+        }
+        else
+        {
+            Debug.LogWarning("robotRenderer is NULL");
         }
     }
 }
