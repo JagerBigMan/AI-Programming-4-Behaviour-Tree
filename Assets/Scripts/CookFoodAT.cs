@@ -48,7 +48,7 @@ public class CookFoodAT : ActionTask
 
         if (timer >= cookDuration)
         {
-            Debug.Log("Cooking finished successfully.");
+            Debug.Log("Cooking finished.");
             EndAction(true);
         }
     }
