@@ -42,8 +42,8 @@ public class WaitAndFaceTarget : ActionTask<Transform>
 
         if (direction != Vector3.zero)
         {
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            agent.rotation = Quaternion.Slerp(agent.rotation, lookRotation, Time.deltaTime * rotateSpeed);
+            Quaternion lookRotation = Quaternion.LookRotation(direction);       
+            agent.rotation = Quaternion.Slerp(agent.rotation, lookRotation, Time.deltaTime * rotateSpeed); //https://docs.unity3d.com/6000.3/Documentation/ScriptReference/Quaternion.Slerp.html
         }
 
         timer += Time.deltaTime;
