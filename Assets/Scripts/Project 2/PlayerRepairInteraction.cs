@@ -7,10 +7,6 @@ public class PlayerRepairInteraction : MonoBehaviour
     public LayerMask repairLayer;
     public KeyCode interactKey = KeyCode.E;
 
-    [Header("Optional")]
-    public Transform interactionCenter;
-    public bool drawDebugSphere = true;
-
     private RepairNode currentNode;
     private RepairNode repairingNode;
     private float repairTimer = 0f;
@@ -50,9 +46,9 @@ public class PlayerRepairInteraction : MonoBehaviour
 
     private void DetectClosestRepairNode()
     {
-        Transform center = interactionCenter != null ? interactionCenter : transform;
+        Vector3 center = transform.position;
 
-        Collider[] hits = Physics.OverlapSphere(center.position, interactionRange, repairLayer);
+        Collider[] hits = Physics.OverlapSphere(center, interactionRange, repairLayer);
 
         currentNode = null;
         float closestDistance = Mathf.Infinity;
@@ -64,7 +60,7 @@ public class PlayerRepairInteraction : MonoBehaviour
             if (node == null || node.IsDestroyed())
                 continue;
 
-            float distance = Vector3.Distance(center.position, node.transform.position);
+            float distance = Vector3.Distance(center, node.transform.position);
 
             if (distance < closestDistance)
             {
@@ -83,15 +79,5 @@ public class PlayerRepairInteraction : MonoBehaviour
     {
         if (repairingNode == null) return 0f;
         return Mathf.Clamp01(repairTimer / repairingNode.repairDuration);
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (!drawDebugSphere) return;
-
-        Transform center = interactionCenter != null ? interactionCenter : transform;
-
-        Gizmos.color = currentNode != null ? Color.green : Color.red;
-        Gizmos.DrawWireSphere(center.position, interactionRange);
     }
 }
