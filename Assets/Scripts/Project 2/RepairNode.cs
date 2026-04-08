@@ -8,7 +8,7 @@ public class RepairNode : MonoBehaviour
     public float currentHP = 100f;
 
     [Header("Repair")]
-    public float repairDuration = 3f;
+    public float repairDuration = 3f; 
 
     [Header("Decay")]
     public float passiveDecayPerSecond = 5f;
@@ -16,7 +16,7 @@ public class RepairNode : MonoBehaviour
     [Header("UI")]
     public Image healthBar;
 
-    private bool hasTriggeredLose = false;
+    private bool hasTriggeredLose = false;  //prevents multiple lose triggers
 
     private void Start()
     {

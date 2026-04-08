@@ -1,37 +1,51 @@
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using UnityEngine;
+using UnityEngine.AI;
 
+public class MoveToRepairNode : ActionTask<Transform>
+{
+    public BBParameter<Transform> targetNode;
+    public float stoppingDistance = 1.5f;
 
-namespace NodeCanvas.Tasks.Actions {
+    private NavMeshAgent navAgent;
 
-	public class MoveToRepairNode : ActionTask {
+    protected override void OnExecute()
+    {
+        navAgent = agent.GetComponent<NavMeshAgent>();
 
-		//Use for initialization. This is called only once in the lifetime of the task.
-		//Return null if init was successfull. Return an error string otherwise
-		protected override string OnInit() {
-			return null;
-		}
+        if (navAgent == null || targetNode.value == null)
+        {
+            EndAction(false);
+            return;
+        }
 
-		//This is called once each time the task is enabled.
-		//Call EndAction() to mark the action as finished, either in success or failure.
-		//EndAction can be called from anywhere.
-		protected override void OnExecute() {
-			EndAction(true);
-		}
+        navAgent.isStopped = false;
+        navAgent.stoppingDistance = stoppingDistance;
+        navAgent.SetDestination(targetNode.value.position);
+    }
 
-		//Called once per frame while the action is active.
-		protected override void OnUpdate() {
-			
-		}
+    protected override void OnUpdate()
+    {
+        if (navAgent == null || targetNode.value == null)
+        {
+            EndAction(false);
+            return;
+        }
 
-		//Called when the task is disabled.
-		protected override void OnStop() {
-			
-		}
+        navAgent.SetDestination(targetNode.value.position);
 
-		//Called when the task is paused.
-		protected override void OnPause() {
-			
-		}
-	}
+        if (!navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)
+        {
+            EndAction(true);
+        }
+    }
+
+    protected override void OnStop()
+    {
+        if (navAgent != null)
+        {
+            navAgent.isStopped = false;
+        }
+    }
 }

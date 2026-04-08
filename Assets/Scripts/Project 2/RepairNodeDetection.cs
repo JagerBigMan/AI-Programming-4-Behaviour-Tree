@@ -1,31 +1,43 @@
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
+using UnityEngine;
 
+public class RepairNodeDetection : ConditionTask<Transform>
+{
+    public BBParameter<float> searchRange = 20f;
+    public BBParameter<LayerMask> nodeLayer;
+    public BBParameter<Transform> targetNode;
 
-namespace NodeCanvas.Tasks.Conditions {
+    protected override bool OnCheck()
+    {
+        Collider[] hits = Physics.OverlapSphere(agent.position, searchRange.value, nodeLayer.value);
 
-	public class RepairNodeDetection : ConditionTask {
+        float closestDistance = Mathf.Infinity;     //by starting off with a very large number (infinity) so the first valid node will be selected 
+        RepairNode closestNode = null;                  //stores the closest valid repair node found so far
 
-		//Use for initialization. This is called only once in the lifetime of the task.
-		//Return null if init was successfull. Return an error string otherwise
-		protected override string OnInit(){
-			return null;
-		}
+        foreach (Collider hit in hits)
+        {
+            RepairNode node = hit.GetComponent<RepairNode>();
 
-		//Called whenever the condition gets enabled.
-		protected override void OnEnable() {
-			
-		}
+            if (node == null || node.IsDestroyed())
+                continue;
 
-		//Called whenever the condition gets disabled.
-		protected override void OnDisable() {
-			
-		}
+            float distance = Vector3.Distance(agent.position, node.transform.position);
 
-		//Called once per frame while the condition is active.
-		//Return whether the condition is success or failure.
-		protected override bool OnCheck() {
-			return true;
-		}
-	}
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestNode = node;
+            }
+        }
+
+        if (closestNode != null)
+        {
+            targetNode.value = closestNode.transform;
+            return true;
+        }
+
+        targetNode.value = null;
+        return false;
+    }
 }
