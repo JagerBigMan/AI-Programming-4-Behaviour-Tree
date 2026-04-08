@@ -2040,7 +2040,7 @@ Transform:
   m_GameObject: {fileID: 925775346}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 27.73, y: 1.57, z: -12.1}
+  m_LocalPosition: {x: 1.26, y: 1.57, z: -9.41}
   m_LocalScale: {x: 1, y: 1.27, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4813,7 +4813,7 @@ MonoBehaviour:
     _version: 3.41
     _category: 
     _comments: 
-    _translation: {x: 61.132355, y: -0.6033503}
+    _translation: {x: 74, y: 39}
     _zoomFactor: 0.96172833
   _firstActivation: 0
   _enableAction: 0
