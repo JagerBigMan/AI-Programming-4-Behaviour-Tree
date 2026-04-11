@@ -3,7 +3,7 @@ using ParadoxNotion.Design;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class PatrolTask : ActionTask<Transform>
+public class PatrolAT : ActionTask<Transform>
 {
     public Transform[] patrolPoints;
 

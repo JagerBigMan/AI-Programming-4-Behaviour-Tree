@@ -28,17 +28,21 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (isDebuffed)             //handles debuff timer
+        if (isDebuffed)
         {
             debuffTimer -= Time.deltaTime;
-
             if (debuffTimer <= 0f)
             {
                 isDebuffed = false;
             }
         }
 
-        float horizontal = Input.GetAxis("Horizontal");             //camera based movements
+        if (DroneComboSystem.playerFrozen)     // Freeze player completely until patrol drone applies debuff
+        {
+            return;
+        }
+
+        float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
         Vector3 forward = cameraTransform.forward;
@@ -64,7 +68,7 @@ public class PlayerController : MonoBehaviour
         controller.Move(move * currentMoveSpeed * Time.deltaTime);
     }
 
-    public void ApplyHandcuffDebuff(float duration)     //apply debuff for a duration
+    public void ApplyHandcuffDebuff(float duration)
     {
         isDebuffed = true;
         debuffTimer = duration;
