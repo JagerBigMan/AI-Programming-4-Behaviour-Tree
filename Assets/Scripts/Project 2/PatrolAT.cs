@@ -86,8 +86,7 @@ public class PatrolTask : ActionTask<Transform>
             }
         }
 
-        // Once the rush trip is done, restore normal speed
-        if (isRushingToFirst && !navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)
+        if (isRushingToFirst && !navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)         // Once the rush trip is done, restore normal speed
         {
             navAgent.speed = normalSpeed;
             isRushingToFirst = false;

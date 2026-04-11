@@ -22,7 +22,7 @@ public class MoveToRepairNode : ActionTask<Transform>
 
         navAgent.isStopped = false;
         navAgent.stoppingDistance = stoppingDistance;
-        navAgent.SetDestination(targetNode.value.position);
+        navAgent.SetDestination(targetNode.value.position);     //sets the position of the node as the destination
     }
 
     protected override void OnUpdate()
@@ -35,7 +35,7 @@ public class MoveToRepairNode : ActionTask<Transform>
 
         navAgent.SetDestination(targetNode.value.position);
 
-        if (!navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)
+        if (!navAgent.pathPending && navAgent.remainingDistance <= navAgent.stoppingDistance)                   //stops when it arrives
         {
             EndAction(true);
         }

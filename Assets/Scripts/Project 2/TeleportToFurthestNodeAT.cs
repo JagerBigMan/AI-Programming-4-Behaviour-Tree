@@ -10,7 +10,7 @@ public class TeleportToFurthestNode : ActionTask<Transform>
     public BBParameter<Transform> targetNode;
 
     public BBParameter<float> dangerDistance = 3f;
-    public BBParameter<float> teleportCooldown = 2f;
+    public BBParameter<float> teleportCooldown = 10f;
     public BBParameter<float> teleportCooldownEndTime;
 
     private Renderer droneRenderer;
@@ -32,7 +32,6 @@ public class TeleportToFurthestNode : ActionTask<Transform>
             return;
         }
 
-        // cache renderer
         droneRenderer = agent.GetComponentInChildren<Renderer>();
         if (droneRenderer != null)
         {
@@ -42,7 +41,7 @@ public class TeleportToFurthestNode : ActionTask<Transform>
         float furthestDistance = 0f;
         Transform furthestNode = null;
 
-        for (int i = 0; i < nodeParent.value.childCount; i++)
+        for (int i = 0; i < nodeParent.value.childCount; i++)                   //gets the child transform from the ParentNode, calculate the distance and then keep the one with the greatest distance
         {
             Transform nodeTransform = nodeParent.value.GetChild(i);
 
@@ -67,10 +66,10 @@ public class TeleportToFurthestNode : ActionTask<Transform>
 
         targetNode.value = furthestNode;
 
-        NavMeshAgent navAgent = agent.GetComponent<NavMeshAgent>();
+        NavMeshAgent navAgent = agent.GetComponent<NavMeshAgent>();     //warp is safer than transform.position, the drone will instantly relocate to the chosen node
         if (navAgent != null)
         {
-            navAgent.Warp(furthestNode.position);
+            navAgent.Warp(furthestNode.position); 
             navAgent.ResetPath();
             navAgent.isStopped = true;
         }
@@ -79,12 +78,11 @@ public class TeleportToFurthestNode : ActionTask<Transform>
             agent.position = furthestNode.position;
         }
 
-        // start cooldown
-        teleportCooldownEndTime.value = Time.time + teleportCooldown.value;
+        teleportCooldownEndTime.value = Time.time + teleportCooldown.value;         // start cooldown
 
         if (droneRenderer != null)
         {
-            droneRenderer.material.color = Color.red;
+            droneRenderer.material.color = Color.red;       //turns red(indicating cooldown)
         }
 
         EndAction(true);

@@ -3,15 +3,15 @@ using ParadoxNotion.Design;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ChaseTargetTask : ActionTask<Transform>
+public class ChaseTargetAT : ActionTask<Transform>
 {
     public BBParameter<Transform> target;
-
     public BBParameter<float> stopDistance = 2f;
-
-    public BBParameter<float> detectionRange = 5f;
+    public BBParameter<float> maxChaseTime = 5f;
+    public BBParameter<float> handcuffDuration = 5f;
 
     private NavMeshAgent navAgent;
+    private float chaseTimer;
 
     protected override void OnExecute()
     {
@@ -22,6 +22,9 @@ public class ChaseTargetTask : ActionTask<Transform>
             EndAction(false);
             return;
         }
+
+        chaseTimer = 0f;
+        navAgent.isStopped = false;
     }
 
     protected override void OnUpdate()
@@ -32,28 +35,33 @@ public class ChaseTargetTask : ActionTask<Transform>
             return;
         }
 
+        chaseTimer += Time.deltaTime;
+
         float distance = Vector3.Distance(agent.position, target.value.position);
 
+        if (distance <= stopDistance.value)         // If bot catches the target, apply handcuff debuff
+        {
+            navAgent.isStopped = true;
 
-        if (distance > detectionRange.value)                        // If the player leaves detection range, stop chasing
-                                                                   // and end this action so the tree can return to patrol
+            PlayerController playerController = target.value.GetComponent<PlayerController>();
+            if (playerController != null)
+            {
+                playerController.ApplyHandcuffDebuff(handcuffDuration.value);
+            }
+
+            EndAction(true);
+            return;
+        }
+
+        if (chaseTimer >= maxChaseTime.value)         // Stop chase if max chase time is reached
         {
             navAgent.isStopped = true;
             EndAction(false);
             return;
         }
 
-
-        if (distance > stopDistance.value)        // If still in detection range but not close enough, keep chasing
-        {
-            navAgent.isStopped = false;
-            navAgent.SetDestination(target.value.position);
-        }
-        else
-        {
-
-            navAgent.isStopped = true;            // Close enough to stop moving, but still keep this branch active
-        }
+        navAgent.isStopped = false;         // Keep chasing
+        navAgent.SetDestination(target.value.position);
     }
 
     protected override void OnStop()

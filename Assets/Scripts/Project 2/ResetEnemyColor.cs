@@ -14,20 +14,20 @@ public class ResetEnemyColor : ActionTask<Transform>
             return;
         }
 
-        Renderer rend = agent.GetComponent<Renderer>();
+        Renderer[] renderers = agent.GetComponentsInChildren<Renderer>();       // Get all renderers on this object and its children
 
-        if (rend == null)
-        {
-            rend = agent.GetComponentInChildren<Renderer>();
-        }
-
-        if (rend == null)
+        if (renderers == null || renderers.Length == 0)
         {
             EndAction(false);
             return;
         }
 
-        rend.material.color = normalColor.value;
+        // Apply color to every mesh
+        foreach (Renderer rend in renderers)
+        {
+            rend.material.color = normalColor.value;
+        }
+
         EndAction(true);
     }
 }

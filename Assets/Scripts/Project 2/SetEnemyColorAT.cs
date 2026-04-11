@@ -1,4 +1,4 @@
-using NodeCanvas.Framework;
+﻿using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
 
@@ -14,20 +14,18 @@ public class SetEnemyColor : ActionTask<Transform>
             return;
         }
 
-        Renderer render = agent.GetComponent<Renderer>();
+        Renderer[] renderers = agent.GetComponentsInChildren<Renderer>();
 
-        if (render == null)
-        {
-            render = agent.GetComponentInChildren<Renderer>();
-        }
-
-        if (render == null)
+        if (renderers == null || renderers.Length == 0)
         {
             EndAction(false);
             return;
         }
 
-        render.material.color = color.value;
+        foreach (Renderer render in renderers)
+        {
+            render.material.color = color.value;
+        }
 
         EndAction(true);
     }

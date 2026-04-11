@@ -28,7 +28,7 @@ public class RepairNode : MonoBehaviour
     {
         if (IsDestroyed()) return;
 
-        currentHP = Mathf.Clamp(currentHP - passiveDecayPerSecond * Time.deltaTime, 0f, maxHP);
+        currentHP = Mathf.Clamp(currentHP - passiveDecayPerSecond * Time.deltaTime, 0f, maxHP);     //adding passive decay to give player more pressure
         RefreshHPBar();
 
         if (currentHP <= 0f && !hasTriggeredLose)
@@ -39,7 +39,7 @@ public class RepairNode : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount)        //This is called by the sabotage drone
     {
         if (IsDestroyed()) return;
 

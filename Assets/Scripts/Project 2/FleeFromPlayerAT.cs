@@ -24,16 +24,16 @@ public class FleeFromPlayer : ActionTask<Transform>
             return;
         }
 
-        navAgent.isStopped = false;
-        nextRepathTime = 0f;
+        navAgent.isStopped = false;     //making sure movement is enabled
+        nextRepathTime = 0f;                //it can repath immediately on first update if needed
 
-        if (!TryFindFleePoint())
+        if (!TryFindFleePoint())        //looking for valid flee destination
         {
-            EndAction(false);
+            EndAction(false);           //if it can't, it fails
             return;
         }
 
-        navAgent.SetDestination(fleeDestination);
+        navAgent.SetDestination(fleeDestination);       //starts moving there if a valid flee point is found
     }
 
     protected override void OnUpdate()
@@ -46,15 +46,13 @@ public class FleeFromPlayer : ActionTask<Transform>
 
         float distanceToPlayer = Vector3.Distance(agent.position, playerTarget.value.position);
 
-        // stop fleeing when far enough away
-        if (distanceToPlayer > fleeDistance.value)
+        if (distanceToPlayer > fleeDistance.value)         // stop fleeing when far enough away
         {
             EndAction(true);
             return;
         }
 
-        // refresh flee target repeatedly using current player position
-        if (Time.time >= nextRepathTime)
+        if (Time.time >= nextRepathTime)          // refresh flee target repeatedly using current player position
         {
             nextRepathTime = Time.time + repathInterval.value;
 
@@ -75,29 +73,27 @@ public class FleeFromPlayer : ActionTask<Transform>
 
     private bool TryFindFleePoint()
     {
-        Vector3 awayDir = (agent.position - playerTarget.value.position).normalized;
+        Vector3 awayDir = (agent.position - playerTarget.value.position).normalized;        //creates a unit vector pointing, if the player is south of the drone, the awayDir would point north.
 
-        for (int i = 0; i < maxAttempts.value; i++)
+        for (int i = 0; i < maxAttempts.value; i++)                 //trying random directions
         {
             Vector2 randomCircle = Random.insideUnitCircle.normalized;
             Vector3 randomDir = new Vector3(randomCircle.x, 0f, randomCircle.y);
 
-            // reject directions that go too much toward the player
-            float dot = Vector3.Dot(randomDir, awayDir);
+            float dot = Vector3.Dot(randomDir, awayDir);             // reject directions that go too much toward the player
             if (dot < 0.3f)
-                continue;
+                continue;                               //It would almost always choose the direction in the half/front arc from the player, this prevents moving into the player
 
-            Vector3 candidate = agent.position + randomDir * fleeDistance.value;
+            Vector3 candidate = agent.position + randomDir * fleeDistance.value;        //This creates a point fleeDistance away from the current position in that random direction
 
-            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, 2f, NavMesh.AllAreas))        //snap it to the navmesh
             {
                 fleeDestination = hit.position;
                 return true;
             }
         }
 
-        // fallback: pure opposite direction
-        Vector3 fallback = agent.position + awayDir * fleeDistance.value;
+        Vector3 fallback = agent.position + awayDir * fleeDistance.value;         // if all attempts fail, then create a point directly opposite to the player, last line of defense
 
         if (NavMesh.SamplePosition(fallback, out NavMeshHit fallbackHit, 2f, NavMesh.AllAreas))
         {

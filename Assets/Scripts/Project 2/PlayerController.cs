@@ -3,9 +3,15 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;
+    public float baseMoveSpeed = 8f;
     public float gravity = -9.81f;
     public Transform cameraTransform;
+
+    [Header("Debuff")]
+    public float speedCap = 5f;
+
+    private bool isDebuffed = false;
+    private float debuffTimer = 0f;
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -13,6 +19,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+
         if (cameraTransform == null && Camera.main != null)
         {
             cameraTransform = Camera.main.transform;
@@ -21,8 +28,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");    
+        if (isDebuffed)             //handles debuff timer
+        {
+            debuffTimer -= Time.deltaTime;
+
+            if (debuffTimer <= 0f)
+            {
+                isDebuffed = false;
+            }
+        }
+
+        float horizontal = Input.GetAxis("Horizontal");             //camera based movements
+        float vertical = Input.GetAxis("Vertical");
 
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
@@ -35,11 +52,21 @@ public class PlayerController : MonoBehaviour
 
         Vector3 move = forward * vertical + right * horizontal;
 
-        if (move.magnitude > 1f)        //Prevents faster diagonal movement.
+        if (move.magnitude > 1f)
         {
             move.Normalize();
         }
 
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        float currentMoveSpeed = isDebuffed
+            ? Mathf.Min(baseMoveSpeed, speedCap)
+            : baseMoveSpeed;
+
+        controller.Move(move * currentMoveSpeed * Time.deltaTime);
+    }
+
+    public void ApplyHandcuffDebuff(float duration)     //apply debuff for a duration
+    {
+        isDebuffed = true;
+        debuffTimer = duration;
     }
 }
